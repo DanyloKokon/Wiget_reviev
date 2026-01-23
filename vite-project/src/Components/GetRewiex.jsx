@@ -1,32 +1,57 @@
-import React from "react"
+import React from "react";
 
-export default class GetRewiev extends React.Component {
+export default class GetReview extends React.Component {
     state = {
         good: 0,
         neutral: 0,
-        bad: 0
-    }
+        bad: 0,
+    };
 
-    countTotallFeedbak = () => { return this.state.good + this.state.neutral + this.state.bad }
-    
-    countingPositiveFeedbackPercentage = () => { }
+
+    handleFeedback = (type) => {
+        this.setState((prevState) => ({
+            [type]: prevState[type] + 1,
+        }));
+    };
+
+    countTotalFeedback = () => {
+        const { good, neutral, bad } = this.state;
+        return good + neutral + bad;
+    };
+
+    countPositiveFeedbackPercentage = () => {
+        const total = this.countTotalFeedback();
+        const { good } = this.state;
+        return total > 0 ? Math.round((good / total) * 100) : 0;
+    };
+
     render() {
-        return <div>
-            <h2>Please leave feedback</h2>
-            <ul >
-                <li onClick={() => { this.setState({ good: this.state.good += 1 }) }}><button>Good</button></li>
-                <li onClick={() => { this.setState({ neutral: this.state.neutral += 1 }) }}><button>Neutral</button></li>
-                <li onClick={() => { this.setState({ bad: this.state.bad += 1 }) }}><button>Bad</button></li>
-            </ul>
+        const { good, neutral, bad } = this.state;
+        const total = this.countTotalFeedback();
+        const positivePercentage = this.countPositiveFeedbackPercentage();
 
-            <h2>Statistics</h2>
-            <ul>
-                <li>Good: {this.state.good}</li>
-                <li>Neutarl: {this.state.neutral}</li>
-                <li>Bad: {this.state.bad}</li>
-                <li>Totall: {this.state.good + this.state.neutral + this.state.bad} </li>
-                <li>Positive feedback: </li>
-            </ul>
-        </div>
+        return (
+            <div>
+                <h2>Please leave feedback</h2>
+                <ul style={{ listStyle: "none", display: "flex", gap: "10px", padding: 0 }}>
+                    <li><button onClick={() => this.handleFeedback("good")}>Good</button></li>
+                    <li><button onClick={() => this.handleFeedback("neutral")}>Neutral</button></li>
+                    <li><button onClick={() => this.handleFeedback("bad")}>Bad</button></li>
+                </ul>
+
+                <h2>Statistics</h2>
+                {total > 0 ? (
+                    <ul>
+                        <li>Good: {good}</li>
+                        <li>Neutral: {neutral}</li>
+                        <li>Bad: {bad}</li>
+                        <li>Total: {total}</li>
+                        <li>Positive feedback: {positivePercentage}%</li>
+                    </ul>
+                ) : (
+                    <p>No feedback given</p>
+                )}
+            </div>
+        );
     }
 }
