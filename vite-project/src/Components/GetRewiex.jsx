@@ -1,32 +1,51 @@
+import React, { useState, useReducer } from 'react';
 
-import React, { useState } from 'react';
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "INCREMENT":
+            return {
+                ...state,
+                [action.payload]: state[action.payload] + 1
+            };
+        default:
+            return state;
+    }
+};
+
 
 export default function GetReview() {
-    const [good, setGood] = useState(0);
-    const [neutral, setNeutral] = useState(0);
-    const [bad, setBad] = useState(0);
+    const initialState = {
+        good: 0,
+        neutral: 0,
+        bad: 0,
+    };
+    // const [good, setGood] = useState(0);
+    // const [neutral, setNeutral] = useState(0);
+    // const [bad, setBad] = useState(0);
+    const[state, dispatch] = useReducer(reducer, initialState);
+
 
     const handleFeedback = (type) => {
         switch (type) {
             case "good":
-                setGood(good + 1);
+                dispatch({ type: "INCREMENT", payload: "good" });
                 break;
             case "neutral":
-                setNeutral(neutral + 1);
+                dispatch({ type: "INCREMENT", payload: "neutral" });
                 break;
             case "bad":
-                setBad(bad + 1);
+                dispatch({ type: "INCREMENT", payload: "bad" });
                 break;
         }
     };
 
     const countTotalFeedback = () => {
-        return good + neutral + bad;
+        return state.good + state.neutral + state.bad;
     };
 
     const countPositiveFeedbackPercentage = () => {
         const total = countTotalFeedback();
-        return total > 0 ? Math.round((good / total) * 100) : 0;
+        return total > 0 ? Math.round((state.good / total) * 100) : 0;
     };
 
 
